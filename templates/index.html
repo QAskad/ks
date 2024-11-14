@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>File Upload</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Popular Files</h1>
+    <ul>
+        {% for file in popular_files %}
+            <li>{{ file.filename }} - Downloads: {{ file.download_count }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Upload a New File</h2>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" required>
+        <br><br>
+        <label for="genre">Genre:</label>
+        <select name="genre" id="genre" required>
+            <option value="">Select a genre</option>
+            {% for genre in genres %}
+                <option value="{{ genre.id }}">{{ genre.name }}</option>
+            {% endfor %}
+        </select>
+        
+        <label for="subgenre">Subgenre:</label>
+        <select name="subgenre" id="subgenre">
+            <option value="">Select a subgenre</option>
+        </select>
+        
+        <br><br>
+        <label for="description">Description:</label>
+        <input type="text" name="description" id="description" maxlength="100" placeholder="Optional description">
+        
+        <br><br>
+        <button type="submit">Upload</button>
+    </form>
+
+    <h2>Library</h2>
+    <div id="library">
+        {% for file in all_files %}
+            <div class="file-item">
+                <p><strong>{{ file.filename }}</strong></p>
+                <p>Description: {{ file.description or "None" }}</p>
+                <p>Size: {{ file.size }} bytes</p>
+                <p>Downloads: {{ file.download_count }}</p>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <div id="filter-section">
+        <h3>Filters</h3>
+        <label for="filter-genre">Genre:</label>
+        <select id="filter-genre">
+            <option value="">All Genres</option>
+            {% for genre in genres %}
+                <option value="{{ genre.id }}">{{ genre.name }}</option>
+            {% endfor %}
+        </select>
+        
+        <label for="filter-subgenre">Subgenre:</label>
+        <select id="filter-subgenre">
+            <option value="">All Subgenres</option>
+        </select>
+        
+        <label for="filter-description">Keyword:</label>
+        <input type="text" id="filter-description" placeholder="Description keyword">
+        
+        <button onclick="applyFilters()">Apply Filters</button>
+    </div>
+
+    <script>
+        // JS to handle filtering
+        function applyFilters() {
+            const genre = document.getElementById("filter-genre").value;
+            const subgenre = document.getElementById("filter-subgenre").value;
+            const description = document.getElementById("filter-description").value;
+
+            fetch('/filter_files', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ genre_id: genre, subgenre_id: subgenre, description: description })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Render filtered files
+                const library = document.getElementById("library");
+                library.innerHTML = "";
+                data.forEach(file => {
+                    const fileItem = document.createElement("div");
+                    fileItem.className = "file-item";
+                    fileItem.innerHTML = `<p><strong>${file.filename}</strong></p>
+                        <p>Description: ${file.description || "None"}</p>
+                        <p>Size: ${file.size} bytes</p>
+                        <p>Downloads: ${file.download_count}</p>`;
+                    library.appendChild(fileItem);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
