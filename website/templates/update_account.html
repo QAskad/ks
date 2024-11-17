@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="content-section">
+        <h2 class="text-center mb-4">Update Account</h2>
+        <form method="POST" enctype="multipart/form-data" class="form-container">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" name="username" value="{{ current_user.username }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password1">New Password</label>
+                <input type="password" class="form-control" name="password1" placeholder="Enter new password">
+            </div>
+
+            <div class="form-group">
+                <label for="password2">Confirm Password</label>
+                <input type="password" class="form-control" name="password2" placeholder="Confirm new password">
+            </div>
+
+            <div class="form-group">
+                <label for="profile_image">Select Profile Image</label>
+                <div class="profile-image-selection">
+                    <div class="image-option">
+                        <input type="radio" id="pic1" name="profile_image" value="pic1.jpg">
+                        <label for="pic1">
+                            <img src="{{ url_for('static', filename='images/pic1.jpg') }}" alt="Image 1" class="profile-image-thumbnail">
+                        </label>
+                    </div>
+                    <div class="image-option">
+                        <input type="radio" id="pic2" name="profile_image" value="pic2.jpg">
+                        <label for="pic2">
+                            <img src="{{ url_for('static', filename='images/pic2.jpg') }}" alt="Image 2" class="profile-image-thumbnail">
+                        </label>
+                    </div>
+                    <div class="image-option">
+                        <input type="radio" id="pic3" name="profile_image" value="pic3.jpg">
+                        <label for="pic3">
+                            <img src="{{ url_for('static', filename='images/pic3.jpg') }}" alt="Image 3" class="profile-image-thumbnail">
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Update</button>
+        </form>
+    </div>
+
+    <style>
+        .content-section {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container {
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .profile-image-selection {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .image-option {
+            text-align: center;
+        }
+
+        .profile-image-thumbnail {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ddd;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .profile-image-thumbnail:hover {
+            transform: scale(1.1);
+            border-color: #007bff;
+        }
+
+        button.btn {
+            margin-top: 20px;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+    </style>
+{% endblock content %}
+
