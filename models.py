@@ -1,28 +1,24 @@
-from flask_sqlalchemy import SQLAlchemy
-
-db = SQLAlchemy()
+from . import db
+from flask_login import UserMixin
 
 class Genre(db.Model):
-    __tablename__ = 'genres'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
+    name = db.Column(db.String(100), nullable=False, unique=True)
 
 class Subgenre(db.Model):
-    __tablename__ = 'subgenres'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
-    genre_id = db.Column(db.Integer, db.ForeignKey('genres.id'))
+    name = db.Column(db.String(100), nullable=False, unique=True)
+    genre_id = db.Column(db.Integer, db.ForeignKey('genre.id'), nullable=False)
+    genre = db.relationship('Genre', backref=db.backref('subgenres', lazy=True))
 
 class File(db.Model):
-    __tablename__ = 'files'
     id = db.Column(db.Integer, primary_key=True)
-    filename = db.Column(db.String(120), nullable=False)
-    path = db.Column(db.String(200), nullable=False)
-    description = db.Column(db.String(100))
-    size = db.Column(db.Integer, nullable=False)
-    download_count = db.Column(db.Integer, default=0)
-    genre_id = db.Column(db.Integer, db.ForeignKey('genres.id'), nullable=True)
-    subgenre_id = db.Column(db.Integer, db.ForeignKey('subgenres.id'), nullable=True)
-    
+    title = db.Column(db.String(150), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    file_path = db.Column(db.String(300), nullable=False)
+    genre_id = db.Column(db.Integer, db.ForeignKey('genre.id'), nullable=True)
+    subgenre_id = db.Column(db.Integer, db.ForeignKey('subgenre.id'), nullable=True)
+    uploaded_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     genre = db.relationship('Genre', backref=db.backref('files', lazy=True))
     subgenre = db.relationship('Subgenre', backref=db.backref('files', lazy=True))
+    user = db.relationship('User', backref=db.backref('uploaded_files', lazy=True))
